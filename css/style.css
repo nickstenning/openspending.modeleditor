@@ -1,0 +1,72 @@
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 90%;
+}
+
+legend + p {
+  margin-top: 0;
+}
+
+.modeleditor {
+  *display: inline-block;
+  width: 100%;
+  border: 1px solid #ccc;
+  background: transparent url(../img/dlbg.png) repeat-y 30% top;
+}
+
+.modeleditor:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.modeleditor .steps {
+  float:left;
+  width: 30%;
+}
+
+.modeleditor .steps ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.modeleditor .steps ul > li {
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.modeleditor .steps li a {
+  display: inline-block;
+  color: inherit;
+  text-decoration: inherit;
+  padding: 0.5em;
+}
+
+
+.modeleditor .steps li span {
+  color: #aaa;
+}
+
+.modeleditor .steps li.active {
+  font-weight: bold;
+}
+
+.modeleditor .forms {
+  float: right;
+  width: 69.9%;
+}
+
+.modeleditor .forms div.formpart {
+  margin: 1em;
+}
+
+.modeleditor .forms .unique_keys .active {
+  font-weight: bold;
+}

@@ -1,0 +1,129 @@
+<!doctype html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1' >
+  <title>OpenSpending model editor</title>
+  <link rel='stylesheet' href='css/forms.css'>
+  <link rel='stylesheet' href='css/style.css'>
+</head>
+<body>
+  <textarea id="debug" style='float:right;width:28%'>
+  </textarea>
+  <div class='content' style='width: 70%'>
+    <div id='m1' class='modeleditor'>
+      <div class='steps'>
+        <ul>
+          <li><a href='#'><span>1</span> Dimension mapping</a></li>
+          <li><a href='#'><span>2</span> Dataset metadata</a></li>
+          <li><a href='#'><span>3</span> Views &amp; visualisation</a></li>
+        </ul>
+      </div>
+      <div class='forms'>
+        <form action='#'>
+
+          <!-- Dimension mapping -->
+          <div class='formpart'>
+            <h2>Dimension mapping</h2>
+            <fieldset class='dimension'>
+              <legend>Amount</legend>
+              <p>
+                The most important field in the dataset. Please choose which of
+              the columns in your dataset represents the value of the spending,
+              and how you'd like it to be displayed.
+              </p>
+              <dl>
+                <dt><label>Column:</label></dt>
+                <dd>
+                  <select class='column' name='mapping[amount][column]'></select>
+                </dd>
+                <dt><label>Label:</label></dt>
+                <dd>
+                  <input type='text' name='mapping[amount][label]'>
+                </dd>
+                <dt><label>Description:</label></dt>
+                <dd>
+                  <textarea class='short' name='mapping[amount][description]'></textarea>
+                </dd>
+              </dl>
+            </fieldset>
+            <fieldset class='dimension'>
+              <legend>From</legend>
+              <p>
+                Who is the spender or source of the money?
+              </p>
+              <div class='dimension-editor'>entity</div>
+            </fieldset>
+          </div>
+
+          <!-- Dataset metadata -->
+          <div class='formpart'>
+            <h3>Dataset metadata</h3>
+            <dl>
+              <dt><label>Name:</label></dt>
+              <dd><input type='text' name='dataset[name]'></dd>
+              <dd class='hints'>
+                Choose a uniquely identifying name, comprising letters,
+                dashes and underscores only. Examples: <code>eu-budget</code>,
+                <code>epsrc-grants</code>, <code>country-regional-analysis</code>.
+              </dd>
+
+              <dt><label>Label:</label></dt>
+              <dd><input type='text' name='dataset[label]'></dd>
+              <dd class='hints'>
+                A human-readable, short representation of the package name:
+                <code>European Union Budget</code>, <code>Country Regional Analysis</code>,
+                etc.
+              </dd>
+
+
+              <dt><label>Unique keys:</label></dt>
+              <dd class='unique_keys'>
+                <script class='uk_template' type='text/x-jquery-tmpl'>
+                  {{if keys.length == 0}}
+                    <em>No dimensions available yet.</em>
+                  {{/if}}
+                  {{each(i, key) keys}}
+                    {{if key.used}}
+                    <input type='hidden' name='dataset[unique_keys][]' value='${key.name}'>
+                    <span class='active'>
+                    {{else}}
+                    <span>
+                    {{/if}}
+                    ${key.name}
+                    </span>
+                  {{/each}}
+                </script>
+                <div class='uk_content'>
+                </div>
+              </dd>
+              <dd class='hints'>
+                Every dataset needs a set of columns from the data file which will
+                <em>uniquely identify</em> any given spending entry in the data.
+              </dd>
+            </dl>
+          </div>
+
+          <!-- Views & visualisation -->
+          <div class='formpart'>
+            <h3>Views and visualisation</h3>
+          </div>
+
+        </form>
+      </div> <!-- /.forms -->
+    </div> <!-- /.modeleditor -->
+  </div> <!-- /.content -->
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js'></script>
+  <script src='http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js'></script>
+
+  <script src='lib/extensions.js'></script>
+  <script src='lib/delegator.js'></script>
+  <script src='lib/modeleditor.js'></script>
+  <script>
+    jQuery(function($) {
+      $('#m1').modelEditor({
+        'columns': ['one', 'two', 'three']
+      });
+    })
+  </script>
+</body>
+</html>

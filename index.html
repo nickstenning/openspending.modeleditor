@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <head>
   <meta charset='utf-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=Edge;chrome=1' >
@@ -13,7 +13,11 @@
     <div id='m1' class='modeleditor'>
       <div class='steps'>
         <ul>
-          <li><a href='#'><span>1</span> Dimension mapping</a></li>
+          <li>
+            <a href='#'><span>1</span> Dimension mapping</a>
+            <ul class='steps_dimensions'>
+            </ul>
+          </li>
           <li><a href='#'><span>2</span> Dataset metadata</a></li>
           <li><a href='#'><span>3</span> Views &amp; visualisation</a></li>
         </ul>
@@ -24,6 +28,14 @@
           <!-- Dimension mapping -->
           <div class='formpart dimensions_widget'>
             <h2>Dimension mapping</h2>
+            <p>
+              The first and most important step in the creation of a model is
+              the mapping of columns in the data file to "dimensions", the logical
+              divisions of the dataset. The four required dimensions, <code>amount</code>,
+              <code>time</code>, <code>from</code>, and <code>to</code> are laid
+              out below, and you can add your own dimensions using the links at
+              the bottom of the page.
+            </p>
             <div class='dimensions'>
             </div>
             <p>
@@ -36,7 +48,7 @@
           <div class='formpart'>
             <h2>Dataset metadata</h2>
             <dl>
-              <dt><label>Name:</label></dt>
+              <dt><label for='dataset[name]'>Name:</label></dt>
               <dd><input type='text' name='dataset[name]'></dd>
               <dd class='hints'>
                 Choose a uniquely identifying name, comprising letters,
@@ -44,7 +56,7 @@
                 <code>epsrc-grants</code>, <code>country-regional-analysis</code>.
               </dd>
 
-              <dt><label>Label:</label></dt>
+              <dt><label for='dataset[label]'>Label:</label></dt>
               <dd><input type='text' name='dataset[label]'></dd>
               <dd class='hints'>
                 A human-readable, short representation of the package name:
@@ -52,12 +64,37 @@
                 etc.
               </dd>
 
+              <dt><label for='dataset[currency]'>Currency:</label></dt>
+              <dd><input type='text' name='dataset[currency]' maxlength='3' class='short'></dd>
+              <dd class='hints'>
+                A 3-letter currency code. Examples: <code>USD</code>, <code>GBP</code>,
+                etc. See <a href='http://en.wikipedia.org/wiki/ISO_4217'>ISO 4217</a>.
+              </dd>
 
-              <dt><label>Unique keys:</label></dt>
+              <dt><label for='dataset[unique_keys]'>Unique keys:</label></dt>
               <dd class='unique_keys_widget'></dd>
               <dd class='hints'>
                 Every dataset needs a set of columns from the data file which will
                 <em>uniquely identify</em> any given spending entry in the data.
+              </dd>
+
+              <dt><label for='dataset[description]'>Description:</label></dt>
+              <dd><textarea name='dataset[description]' class='short'></textarea></dd>
+              <dd class='hints'>
+                A longer description of the dataset, including (for example)
+                information on its provenance, data quality. This will be
+                processed as <a href='http://daringfireball.net/projects/markdown'>
+                Markdown</a>.
+              </dd>
+
+              <dt><label for='dataset[entry_custom_html]'>Entry Custom HTML:</label></dt>
+              <dd><textarea name='dataset[entry_custom_html]' class='short'></textarea></dd>
+              <dd class='hints'>
+                An HTML template that will be displayed on the page for an entry,
+                which can incorporate properties of that entry. e.g.
+                <pre><code>&lt;a href="http://example.com/entry/${entry.id}"&gt;
+  ${entry.label}
+&lt;/a&gt;</code></pre>
               </dd>
             </dl>
           </div>

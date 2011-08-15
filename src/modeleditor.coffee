@@ -8,7 +8,7 @@ DEFAULT_MODEL =
     time:
       type: 'value'
       datatype: 'date'
-      label: 'Time'  
+      label: 'Time'
     from:
       type: 'entity'
       label: 'Spender'
@@ -86,7 +86,16 @@ class UniqueKeyWidget extends Widget
 
   deserialize: (data) ->
     uniq = (data['dataset']?['unique_keys'] or [])
-    @keys = ({'name': k, 'used': k in uniq} for k, v of data['mapping'])
+
+    availableKeys = []
+    for k, v of data['mapping']
+      if v['type'] isnt 'value'
+        for fk, fv of v['fields']
+          availableKeys.push("#{k}.#{fk}")
+      else
+        availableKeys.push(k)
+
+    @keys = ({'name': k, 'used': k in uniq} for k in availableKeys)
     this.render()
 
   render: ->

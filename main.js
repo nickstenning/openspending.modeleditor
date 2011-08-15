@@ -286,6 +286,8 @@
       this.name = name;
       el = $("<fieldset class='dimension' data-dimension-name='" + this.name + "'>            </fieldset>").appendTo(container);
       DimensionWidget.__super__.constructor.call(this, el, options);
+      this.id = "" + (this.element.parents('.modeleditor').attr('id')) + "_dim_" + this.name;
+      this.element.attr('id', this.id);
       this.meta = DIMENSION_META[this.name] || {};
     }
     DimensionWidget.prototype.deserialize = function(data) {
@@ -375,8 +377,10 @@
       this.dimsEl = this.element.find('.dimensions').get(0);
     }
     DimensionsWidget.prototype.addDimension = function(name) {
-      this.widgets.push(new DimensionWidget(name, this.dimsEl));
-      return this.widgets[this.widgets.length - 1];
+      var w;
+      w = new DimensionWidget(name, this.dimsEl);
+      this.widgets.push(w);
+      return w;
     };
     DimensionsWidget.prototype.removeDimension = function(name) {
       var idx, w, _i, _len, _ref;
@@ -456,7 +460,8 @@
     ModelEditor.prototype.events = {
       'modelChange': 'onModelChange',
       'fillColumnsRequest': 'onFillColumnsRequest',
-      '.steps ul > li click': 'onStepClick',
+      '.steps > ul > li click': 'onStepClick',
+      '.steps > ul > li > ul > li click': 'onStepDimensionClick',
       '.forms form submit': 'onFormSubmit',
       '.forms form change': 'onFormChange'
     };
@@ -466,6 +471,11 @@
       this.data = $.extend(true, {}, DEFAULT_MODEL);
       this.widgets = [];
       this.form = $(element).find('.forms form').eq(0);
+      this.id = this.element.attr('id');
+      if (!(this.id != null)) {
+        this.id = Math.floor(Math.random() * 0xffffffff).toString(16);
+        this.element.attr('id', this.id);
+      }
       this.element.find('script[type="text/x-jquery-tmpl"]').each(function() {
         return $(this).template($(this).attr('id'));
       });
@@ -486,14 +496,17 @@
       this.setStep(0);
     }
     ModelEditor.prototype.setStep = function(s) {
-      $(this.element).find('.steps li').removeClass('active').eq(s).addClass('active');
+      $(this.element).find('.steps > ul > li').removeClass('active').eq(s).addClass('active');
       return $(this.element).find('.forms div.formpart').hide().eq(s).show();
     };
     ModelEditor.prototype.onStepClick = function(e) {
       var idx;
-      idx = this.element.find('.steps li').index(e.currentTarget);
+      idx = this.element.find('.steps > ul > li').index(e.currentTarget);
       this.setStep(idx);
       return false;
+    };
+    ModelEditor.prototype.onStepDimensionClick = function(e) {
+      return e.stopPropagation();
     };
     ModelEditor.prototype.onFormChange = function(e) {
       if (this.ignoreFormChange) {
@@ -508,7 +521,7 @@
       return false;
     };
     ModelEditor.prototype.onModelChange = function() {
-      var k, v, w, _i, _len, _ref, _ref2;
+      var dimNames, k, n, v, w, _i, _len, _ref, _ref2;
       _ref = util.flattenObject(this.data);
       for (k in _ref) {
         v = _ref[k];
@@ -519,6 +532,25 @@
         w = _ref2[_i];
         w.deserialize($.extend(true, {}, this.data));
       }
+      dimNames = (function() {
+        var _ref3, _results;
+        _ref3 = this.data['mapping'];
+        _results = [];
+        for (k in _ref3) {
+          v = _ref3[k];
+          _results.push(k);
+        }
+        return _results;
+      }).call(this);
+      this.element.find('.steps ul.steps_dimensions').html(((function() {
+        var _j, _len2, _results;
+        _results = [];
+        for (_j = 0, _len2 = dimNames.length; _j < _len2; _j++) {
+          n = dimNames[_j];
+          _results.push('<li><a href="#' + ("" + this.id + "_dim_" + n) + '">' + ("" + n + "</a>"));
+        }
+        return _results;
+      }).call(this)).join('\n'));
       return $('#debug').text(JSON.stringify(this.data, null, 2));
     };
     ModelEditor.prototype.onFillColumnsRequest = function(elem) {

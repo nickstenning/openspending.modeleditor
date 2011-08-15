@@ -8,7 +8,7 @@ DEFAULT_MODEL =
     time:
       type: 'value'
       datatype: 'date'
-      label: 'Time'    
+      label: 'Time'
     from:
       type: 'entity'
       label: 'Spender'
@@ -124,6 +124,9 @@ class DimensionWidget extends Widget
 
     super el, options
 
+    @id = "#{@element.parents('.modeleditor').attr('id')}_dim_#{@name}"
+    @element.attr('id', @id)
+
     @meta = DIMENSION_META[@name] or {}
 
   deserialize: (data) ->
@@ -196,8 +199,9 @@ class DimensionsWidget extends Delegator
     @dimsEl = @element.find('.dimensions').get(0)
 
   addDimension: (name) ->
-    @widgets.push(new DimensionWidget(name, @dimsEl))
-    @widgets[@widgets.length - 1]
+    w = new DimensionWidget(name, @dimsEl)
+    @widgets.push(w)
+    return w
 
   removeDimension: (name) ->
     idx = null
@@ -254,7 +258,8 @@ class ModelEditor extends Delegator
   events:
     'modelChange': 'onModelChange'
     'fillColumnsRequest': 'onFillColumnsRequest'
-    '.steps ul > li click': 'onStepClick'
+    '.steps > ul > li click': 'onStepClick'
+    '.steps > ul > li > ul > li click': 'onStepDimensionClick'
     '.forms form submit': 'onFormSubmit'
     '.forms form change': 'onFormChange'
 
@@ -264,6 +269,11 @@ class ModelEditor extends Delegator
     @widgets = []
 
     @form = $(element).find('.forms form').eq(0)
+
+    @id = @element.attr('id')
+    if not @id?
+      @id = Math.floor((Math.random()*0xffffffff)).toString(16)
+      @element.attr('id', @id)
 
     # Precompile templates
     @element.find('script[type="text/x-jquery-tmpl"]').each  ->
@@ -283,16 +293,19 @@ class ModelEditor extends Delegator
     this.setStep 0
 
   setStep: (s) ->
-    $(@element).find('.steps li')
+    $(@element).find('.steps > ul > li')
       .removeClass('active')
       .eq(s).addClass('active')
 
     $(@element).find('.forms div.formpart').hide().eq(s).show()
 
   onStepClick: (e) ->
-    idx = @element.find('.steps li').index(e.currentTarget)
+    idx = @element.find('.steps > ul > li').index(e.currentTarget)
     this.setStep idx
     return false
+
+  onStepDimensionClick: (e) ->
+    e.stopPropagation()
 
   onFormChange: (e) ->
     return if @ignoreFormChange
@@ -317,6 +330,12 @@ class ModelEditor extends Delegator
     # components may not have been correctly filled out by the above.
     for w in @widgets
       w.deserialize($.extend(true, {}, @data))
+
+    # Update dimension list in sidebar
+    dimNames = (k for k, v of @data['mapping'])
+    @element.find('.steps ul.steps_dimensions').html(
+      ('<li><a href="#' + "#{@id}_dim_#{n}" + '">' + "#{n}</a>" for n in dimNames).join('\n')
+    )
 
     $('#debug').text(JSON.stringify(@data, null, 2))
 

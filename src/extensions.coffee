@@ -14,10 +14,8 @@ $.plugin = (name, object) ->
         instance = new object(this, options)
         $.data(this, name, instance)
 
-# Serialize a form to a nested JSON object
-$.fn.serializeObject = ->
+$.a2o = (ary) ->
   obj = {}
-  ary = this.serializeArray()
 
   walk = (o, path, value) ->
     key = path[0]
@@ -43,3 +41,9 @@ $.fn.serializeObject = ->
     walk(obj, path, this.value)
 
   obj
+
+# Serialize a form to a nested JSON object
+$.fn.serializeObject = ->
+  ary = this.serializeArray()
+  $.a2o(ary)
+

@@ -3,8 +3,29 @@ body {
   font-size: 90%;
 }
 
-legend + p {
+legend + * {
   margin-top: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+}
+
+table thead tr {
+  border: none;
+}
+
+table td {
+  padding: 3px;
+  border-left: 1px solid #ccc;
+}
+
+table td:first-child {
+  border: none;
 }
 
 .modeleditor {
@@ -67,6 +88,6 @@ legend + p {
   margin: 1em;
 }
 
-.modeleditor .forms .unique_keys .active {
+.modeleditor .forms .unique_keys_widget .active {
   font-weight: bold;
 }

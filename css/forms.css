@@ -40,6 +40,7 @@ input[type=url], input.url {
   input[type=password], table input.password, table
   input[type=email], table input.email, table
   input[type=url], table input.url {
+    width: auto;
     margin: 0; }
 
 input.title {

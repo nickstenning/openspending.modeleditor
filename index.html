@@ -22,42 +22,19 @@
         <form action='#'>
 
           <!-- Dimension mapping -->
-          <div class='formpart'>
+          <div class='formpart dimensions_widget'>
             <h2>Dimension mapping</h2>
-            <fieldset class='dimension'>
-              <legend>Amount</legend>
-              <p>
-                The most important field in the dataset. Please choose which of
-              the columns in your dataset represents the value of the spending,
-              and how you'd like it to be displayed.
-              </p>
-              <dl>
-                <dt><label>Column:</label></dt>
-                <dd>
-                  <select class='column' name='mapping[amount][column]'></select>
-                </dd>
-                <dt><label>Label:</label></dt>
-                <dd>
-                  <input type='text' name='mapping[amount][label]'>
-                </dd>
-                <dt><label>Description:</label></dt>
-                <dd>
-                  <textarea class='short' name='mapping[amount][description]'></textarea>
-                </dd>
-              </dl>
-            </fieldset>
-            <fieldset class='dimension'>
-              <legend>From</legend>
-              <p>
-                Who is the spender or source of the money?
-              </p>
-              <div class='dimension-editor'>entity</div>
-            </fieldset>
+            <div class='dimensions'>
+            </div>
+            <p>
+              <a class='add_value_dimension' href='#'>Add single-column dimension</a>
+              <a class='add_classifier_dimension' href='#'>Add multi-column dimension</a>
+            </p>
           </div>
 
           <!-- Dataset metadata -->
           <div class='formpart'>
-            <h3>Dataset metadata</h3>
+            <h2>Dataset metadata</h2>
             <dl>
               <dt><label>Name:</label></dt>
               <dd><input type='text' name='dataset[name]'></dd>
@@ -77,25 +54,7 @@
 
 
               <dt><label>Unique keys:</label></dt>
-              <dd class='unique_keys'>
-                <script class='uk_template' type='text/x-jquery-tmpl'>
-                  {{if keys.length == 0}}
-                    <em>No dimensions available yet.</em>
-                  {{/if}}
-                  {{each(i, key) keys}}
-                    {{if key.used}}
-                    <input type='hidden' name='dataset[unique_keys][]' value='${key.name}'>
-                    <span class='active'>
-                    {{else}}
-                    <span>
-                    {{/if}}
-                    ${key.name}
-                    </span>
-                  {{/each}}
-                </script>
-                <div class='uk_content'>
-                </div>
-              </dd>
+              <dd class='unique_keys_widget'></dd>
               <dd class='hints'>
                 Every dataset needs a set of columns from the data file which will
                 <em>uniquely identify</em> any given spending entry in the data.
@@ -105,11 +64,124 @@
 
           <!-- Views & visualisation -->
           <div class='formpart'>
-            <h3>Views and visualisation</h3>
+            <h2>Views and visualisation</h2>
           </div>
 
         </form>
       </div> <!-- /.forms -->
+
+      <!-- Unique keys template -->
+      <script id='tpl_unique_keys' type='text/x-jquery-tmpl'>
+        {{if keys.length == 0}}
+          <em>No dimensions available yet.</em>
+        {{/if}}
+        {{each(i, key) keys}}
+          {{if key.used}}
+            <input type='hidden' name='dataset[unique_keys][]' value='${key.name}'>
+            <span class='active'>
+          {{else}}
+            <span>
+          {{/if}}
+          ${key.name}
+          </span>
+        {{/each}}
+      </script>
+
+      <!-- Dimension column field template -->
+      <script id='tpl_dimension_field' type='text/x-jquery-tmpl'>
+        <tr data-field-name='${fieldName}'>
+          <td>${fieldName}</td>
+          <td><select class='column' name='${prefix(fieldName)}[column]'></select></td>
+          <td>
+            <select name='${prefix(fieldName)}[datatype]'>
+              <option value=''></option>
+              <option value='float'>float</option>
+              <option value='string'>string</option>
+            </select>
+          </td>
+          <td>
+            <a href='#' class='field_switch_constant'>&rarr; const</a>
+            {{if required(fieldName) != true}}
+            <a href='#' class='field_rm'>&times;</a>
+            {{/if}}
+          </td>
+        </tr>
+      </script>
+
+      <!-- Dimension constant field template -->
+      <script id='tpl_dimension_field_const' type='text/x-jquery-tmpl'>
+        <tr data-field-name='${fieldName}'>
+          <td>
+            ${fieldName}
+            <input type='hidden' name='${prefix(fieldName)}[datatype]' value='constant'>
+          </td>
+          <td><input type='text' name='${prefix(fieldName)}[constant]'></td>
+          <td>constant</td>
+          <td>
+            <a href='#' class='field_switch_column'>&rarr; column</a>
+            {{if required(fieldName) != true}}
+            <a href='#' class='field_rm'>&times;</a>
+            {{/if}}
+          </td>
+        </tr>
+      </script>
+
+      <!-- Dimension template -->
+      <script id='tpl_dimension' type='text/x-jquery-tmpl'>
+        <input type='hidden' name='mapping[${name}][type]' value='${data.type}'>
+        {{if meta.fixedDataType}}
+        <input type='hidden' name='mapping[${name}][datatype]' value='${data.datatype}'>
+        {{/if}}
+        <legend>${name}</legend>
+        {{if meta.helpText}}<p>${meta.helpText}</p>{{/if}}
+        <dl>
+          {{if data.type === 'value'}}
+            <dt><label>Column:</label></dt>
+            <dd>
+              <select class='column' name='mapping[${name}][column]'></select>
+            </dd>
+            {{if !meta.fixedDataType}}
+              <dt><label>Data type:</label></dt>
+              <dd>
+                <select name='mapping[${name}][datatype]'>
+                  <option value='float'>float</option>
+                  <option value='string'>string</option>
+                </select>
+              </dd>
+            {{/if}}
+          {{/if}}
+          <dt><label>Label:</label></dt>
+          <dd>
+            <input type='text' name='mapping[${name}][label]' value='${data.label}'>
+          </dd>
+          <dt><label>Description:</label></dt>
+          <dd>
+            <textarea class='short' name='mapping[${name}][description]'>${data.description}</textarea>
+          </dd>
+        </dl>
+        {{if data.type !== 'value' }}
+          <table class='fields'>
+            <thead>
+              <tr>
+                <td>Field name</td>
+                <td>Column/Const</td>
+                <td>Type</td>
+                <td>&nbsp;</td>
+              </tr>
+            </thead>
+            <tbody>
+            {{each(n, f) data.fields}}
+              {{if f.datatype === 'constant'}}
+                {{tmpl({'fieldName': n, 'prefix': formFieldPrefix, 'required': formFieldRequired}) '#tpl_dimension_field_const'}}
+              {{else}}
+                {{tmpl({'fieldName': n, 'prefix': formFieldPrefix, 'required': formFieldRequired}) '#tpl_dimension_field'}}
+              {{/if}}
+            {{/each}}
+            </tbody>
+          </table>
+          <p><a class='add_field' href='#'>Add a field</a></p>
+        {{/if}}
+      </script>
     </div> <!-- /.modeleditor -->
   </div> <!-- /.content -->
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js'></script>
@@ -123,6 +195,11 @@
       $('#m1').modelEditor({
         'columns': ['one', 'two', 'three']
       });
+      var me = $('#m1').data('modelEditor')
+      $('#debug').change(function () {
+        me.data = JSON.parse($(this).val())
+        $('#m1').trigger('modelChange')
+      })
     })
   </script>
 </body>

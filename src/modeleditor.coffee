@@ -1,20 +1,20 @@
 DEFAULT_MODEL =
   dataset: {}
   mapping:
-    # amount:
-    #   type: 'value'
-    #   datatype: 'float'
-    #   label: 'Amount'
-    # time:
-    #   type: 'value'
-    #   datatype: 'date'
-    #   label: 'Time'
+    amount:
+      type: 'value'
+      datatype: 'float'
+      label: 'Amount'
+    time:
+      type: 'value'
+      datatype: 'date'
+      label: 'Time'    
     from:
       type: 'entity'
       label: 'Spender'
-    # to:
-    #   type: 'entity'
-    #   label: 'Recipient'
+    to:
+      type: 'entity'
+      label: 'Recipient'
   views: []
 
 DIMENSION_META =

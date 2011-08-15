@@ -6,6 +6,9 @@ path = require 'path'
 task 'watch', 'Run development source watcher', ->
   util.relay 'coffee', ['-w', '-b', '-c', '-o', 'lib/', 'src/'], util.noisyPrint
 
+task 'compile', 'Compile production source', ->
+  util.relay 'coffee', ['-j', 'main.js', '-c', 'src/extensions', 'src/delegator', 'src/modeleditor'], print
+
 util =
   # relay: run child process relaying std{out,err} to this process
   relay: (cmd, args, stdoutPrint=print, stderrPrint=debug) ->

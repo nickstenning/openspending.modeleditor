@@ -88,6 +88,18 @@ table td:first-child {
   margin: 1em;
 }
 
-.modeleditor .forms .unique_keys_widget .active {
+.modeleditor .forms .unique_keys_widget span {
+  cursor: pointer;
+}
+
+.modeleditor .forms .unique_keys_widget span.active {
   font-weight: bold;
+  color: #fff;
+  background: #33a;
+  padding: 3px 0 3px 3px;
+  margin: 0 3px 0 0;
+}
+
+.modeleditor .forms .unique_keys_widget span:last-of-type.active {
+  padding: 3px;
 }

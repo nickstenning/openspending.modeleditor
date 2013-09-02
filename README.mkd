@@ -6,3 +6,8 @@ merged into the core OpenSpending ETL project.
 
 To view a demo of the model editor, visit
 http://nickstenning.github.com/openspending.modeleditor 
+
+## License
+
+The OpenSpending model editor code is released under the MIT license, a copy 
+of which can be found in `LICENSE`.
